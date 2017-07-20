@@ -57,6 +57,7 @@ import android.provider.Telephony;
 import android.telecom.VideoProfile;
 import android.telephony.CarrierConfigManager;
 import android.telephony.CellLocation;
+import android.telephony.ims.feature.ImsFeature;
 import android.telephony.ImsiEncryptionInfo;
 import android.telephony.NetworkScanRequest;
 import android.telephony.ims.feature.ImsFeature;
@@ -1087,6 +1088,16 @@ public class GsmCdmaPhone extends Phone {
                  (imsPhone.isVideoEnabled() && VideoProfile.isVideo(videoState)))
                  && (imsPhone.getServiceState().getState() == ServiceState.STATE_IN_SERVICE)
                  && !shallDialOnCircuitSwitch(intentExtras);
+
+        int imsFeatureState = ImsFeature.STATE_NOT_AVAILABLE;
+        try {
+            if (imsPhone != null) {
+                imsFeatureState = ImsManager.getInstance(imsPhone.getContext(),
+                        imsPhone.getPhoneId()).getImsServiceStatus();
+            }
+        } catch (ImsException e) {
+            Log.e(LOG_TAG, "Got ImsException for phoneId " + imsPhone.getPhoneId());
+        }
 
         int imsFeatureState = ImsFeature.STATE_NOT_AVAILABLE;
         try {
